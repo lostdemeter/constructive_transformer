@@ -9,7 +9,7 @@ This project demonstrates that a transformer language model can be **constructed
 ```
 t4_constructive_transformer/
 ├── paper/
-│   └── paper.md           # The paper
+│   └── [paper.pdf](./paper/paper.pdf)           # The paper (PDF)
 ├── output/
 │   └── code/
 │       ├── 01_4state_alphabet.py    # 4-state alphabet and operators
