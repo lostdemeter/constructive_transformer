@@ -2,6 +2,8 @@
 
 Building a Language Model by Hand — No Gradient Descent, Byte-Exact Arithmetic.
 
+[Read the paper (PDF)](./paper/paper.pdf)
+
 This project demonstrates that a transformer language model can be **constructed by hand** with every weight placed explicitly. The model operates on a 4-state per-axis alphabet with exact integer arithmetic, achieving byte-exact accuracy on concept arithmetic and subject-verb agreement without any training.
 
 ## Directory Structure
@@ -9,7 +11,7 @@ This project demonstrates that a transformer language model can be **constructed
 ```
 t4_constructive_transformer/
 ├── paper/
-│   └── [paper.pdf](./paper/paper.pdf)           # The paper (PDF)
+│   └── paper.md           # The paper
 ├── output/
 │   └── code/
 │       ├── 01_4state_alphabet.py    # 4-state alphabet and operators
