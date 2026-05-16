@@ -1,0 +1,132 @@
+% TruthSpace paper preamble -- IEEE-inspired twocolumn layout
+% Loaded via pandoc --include-in-header to keep raw LaTeX intact.
+
+\usepackage{float}
+\usepackage{array}
+\usepackage{etoolbox}
+
+% dblfloatfix improves placement of \begin{figure*} (two-column-
+% spanning floats).  Without it, LaTeX 2e tends to defer wide floats
+% to the end of a chapter or onto float-only pages.  With dblfloatfix
+% wide floats can land at the bottom of a column and flow more
+% naturally with the text that references them.
+\usepackage{dblfloatfix}
+
+% seqsplit lets us break long monospace identifiers (file paths,
+% function names with underscores) anywhere, which prevents the
+% otherwise-unhyphenable \texttt{...} runs from overflowing a
+% narrow column.  Used by the post-process step in build_paper.sh
+% to wrap any long inline \texttt content.
+\usepackage{seqsplit}
+
+% Caption styling.  We suppress LaTeX's auto "Figure N." prefix because
+% the markdown captions already include their own chapter-prefixed labels
+% ("Figure 3.1:", "Figure B.6:", etc.).  Without this, captions would
+% render as "Figure 5. Figure 3.1: ..." (doubled).
+\usepackage[font=small,labelformat=empty,labelsep=none]{caption}
+
+% Keep figures inside the chapter (\section in this article-class
+% paper) they belong to so floats don't migrate across major
+% boundaries, but allow them to flow within a chapter (subsection
+% boundaries don't introduce \FloatBarrier).  Without this, large
+% wide-figure floats migrate to the wrong place; with [section] they
+% used to get isolated on their own pages.  We balance this by adding
+% a manual \FloatBarrier before each \chapter-equivalent (the level-1
+% section) inside the post-process.
+\usepackage{placeins}
+
+% Tighter column gutter and float spacing
+\setlength{\columnsep}{18pt}
+\setlength{\textfloatsep}{8pt}
+\setlength{\intextsep}{8pt}
+
+% Float-placement fractions tuned for wide figures (figure*) so they
+% can land at the top or bottom of regular text pages instead of
+% being banished to float-only pages.  LaTeX defaults are very
+% conservative (topfraction=0.7, dbltopfraction=0.7,
+% floatpagefraction=0.5) which routinely rejects a 4-inch-tall
+% figure on a 9-inch text column.  These looser values keep wide
+% figures with their text reference.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\dblfloatpagefraction}{0.85}
+
+% Default every \includegraphics{} to \linewidth (graphicx is already
+% loaded by pandoc earlier in the preamble).  \linewidth equals
+% \columnwidth in single-column blocks and \textwidth in figure*
+% (two-column-spanning) floats, so multi-panel figures promoted to
+% figure* by the build_paper.sh post-process automatically fill the
+% page width.
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+% Code blocks at column width.  Pandoc defines the Highlighting
+% environment via \DefineVerbatimEnvironment with the base fancyvrb
+% package, but fancyvrb does not provide line-breaking options.
+% Load fvextra (a superset of fancyvrb) which adds breaklines/
+% breakanywhere, and use \RecustomVerbatimEnvironment to override
+% the pandoc definition with our breaking-enabled options.
+\usepackage{fvextra}
+\RecustomVerbatimEnvironment{Highlighting}{Verbatim}{%
+  commandchars=\\\{\},%
+  breaklines=true,%
+  breakanywhere=true,%
+  fontsize=\scriptsize}
+% Also apply to plain verbatim code blocks (pandoc's `verbatim`
+% environment), which lack syntax highlighting.
+\fvset{breaklines=true,breakanywhere=true,fontsize=\scriptsize}
+
+% Redirect plain LaTeX `verbatim` (used by pandoc for code blocks
+% without a language tag) to fancyvrb's `Verbatim`, so that the
+% breaklines/breakanywhere settings above apply to *every* code
+% block in the paper.  Without this, an un-labelled triple-backtick
+% block (e.g. the pseudocode skeleton in 1.4) typesets as a plain
+% verbatim and overflows the column at long lines.
+\renewenvironment{verbatim}
+  {\VerbatimEnvironment\begin{Verbatim}}
+  {\end{Verbatim}}
+
+% Pandoc emits a longtable environment for every markdown table.
+% longtable doesn't work in twocolumn mode, so build_paper.sh
+% post-processes each one into a centred footnotesize tabularx of
+% column width.  See the post-process step in build_paper.sh for the
+% full token rewriting (the comment patterns there avoid putting
+% literal longtable begin/end tokens in this preamble).
+%
+% A wide table that should span both columns can be wrapped in raw
+% LaTeX table-star markup in the markdown source: tabularx's
+% \linewidth then expands to \textwidth (full two-column width).
+%
+% endhead / endfirsthead / endfoot / endlastfoot get \let-relaxed so
+% any surviving longtable-syntax commands are no-ops.
+\usepackage{tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newenvironment{tsxtable}{\begin{center}\footnotesize}{\end{center}}
+\let\endhead\relax
+\let\endfirsthead\relax
+\let\endfoot\relax
+\let\endlastfoot\relax
+
+% Figure dividers.  A simple centred thin rule inserted at the top
+% and bottom of every floated figure so readers can tell where the
+% figure starts and ends when it lands in the middle of a page
+% (between paragraphs of body text).  At a page edge the rule sits
+% against the margin and the page boundary itself serves as a
+% divider, which is harmless.  The rule has the same width and
+% weight as the chapter-section separators that pandoc emits for
+% markdown horizontal rules (---), so figure dividers blend
+% visually with section breaks rather than introducing a second
+% divider style.
+\newcommand{\figdivider}{%
+  \par\addvspace{4pt}%
+  {\centering\rule{0.5\linewidth}{0.5pt}\par}%
+  \addvspace{2pt}%
+}
+% Hook the divider into every figure / figure* float so the
+% ornament travels with the float to wherever LaTeX places it.
+\AtBeginEnvironment{figure}{\figdivider}
+\AtEndEnvironment{figure}{\figdivider}
+\AtBeginEnvironment{figure*}{\figdivider}
+\AtEndEnvironment{figure*}{\figdivider}
