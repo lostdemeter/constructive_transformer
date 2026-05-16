@@ -26,7 +26,9 @@ t4_constructive_transformer/
 
 > **A transformer LLM is a finite-state machine over a small number of orthogonal axis blocks, with attention routing content across positions and embeddings committing content at positions. The "intelligence" of an LLM, insofar as it lies in concept arithmetic and grammatical agreement, is structurally inevitable given this substrate. It can be constructed by hand, byte-exactly, without any training procedure.**
 
-## Experiments (T4 Series)
+## Experiments
+
+("T4" is an internal naming convention; the number has no significance for the paper itself.)
 
 | Experiment | What it proves | Result |
 |------------|----------------|--------|
@@ -54,15 +56,6 @@ python experiments/t4_sva.py
 ```
 
 Requirements: Python 3.9+, NumPy, PyTorch 2.0+.
-
-## Relationship to TruthSpace Volumes
-
-This paper extracts and standalone-publishes the T4 series from **TruthSpace Volume 2: From Architectural Inductive Bias to φ-Computer Equivalence** (Chapter 2). The companion volumes document the full research program:
-
-- **Volume 1**: Reverse-engineering OLMo2 as a φ-computer
-- **Volume 2**: The full T1–T6 experimental series including scaling, methodology audit, and the Axial State Machine
-
-All experiments and findings reside in the parent project at `olmo2_geometric/experiments/` and `olmo2_geometric/docs/findings/`.
 
 ## License
 
